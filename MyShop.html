@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Bán Hàng Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #0078d4;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        nav {
+            text-align: center;
+            background-color: #0056a1;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .product {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .product-item {
+            flex: 1 1 calc(25% - 20px);
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            text-align: center;
+        }
+        .product-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .product-item h3 {
+            margin: 10px 0;
+        }
+        .product-item p {
+            color: #0078d4;
+            font-weight: bold;
+        }
+        .product-item button {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .product-item button:hover {
+            background-color: #0056a1;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #0078d4;
+            color: white;
+            margin-top: 20px;
+        }
+        .account {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .account a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .cart {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .cart a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cart">
+            <a href="giohang.html" id="cart-link">Giỏ hàng (0)</a>
+        </div>
+        <h1>Shop Bán Hàng Online</h1>
+        <p>Nơi bạn tìm thấy mọi sản phẩm yêu thích!</p>
+        <div class="account">
+            <a href="login.html" id="login-link">Đăng nhập</a>
+        </div>
+    </header>
+    <nav>
+        <a href="MyShop.html">Trang chủ</a>
+        <a href="sanpham.html">Sản phẩm</a>
+        <a href="lienhe.html">Liên hệ</a>
+        <a href="gioithieu.html">Giới thiệu</a>
+    </nav>
+    <div class="container">
+        <h2>Sản phẩm nổi bật</h2>
+        <div class="product" id="product-list">
+            <!-- Danh sách sản phẩm sẽ được hiển thị ở đây -->
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Shop Bán Hàng Online. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const loginLink = document.getElementById('login-link');
+        const cartLink = document.getElementById('cart-link');
+        const productList = document.getElementById('product-list');
+        const cart = [];
+
+        if (isLoggedIn) {
+            const username = localStorage.getItem('username');
+            loginLink.outerHTML = `<a href="profile.html">👤 ${username}</a>`;
+        }
+
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            productList.innerHTML = '';
+
+            products.forEach((product, index) => {
+                const productItem = document.createElement('div');
+                productItem.classList.add('product-item');
+
+                productItem.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.price.toLocaleString('vi-VN')} VND</p>
+                    <button onclick="addToCart('${product.name}', ${product.price})">Mua ngay</button>
+                `;
+
+                productList.appendChild(productItem);
+            });
+        }
+
+       function addToCart(productName, productPrice) {
+    if (!isLoggedIn) {
+        alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+        return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];  // Lấy giỏ hàng từ localStorage
+    cart.push({ name: productName, price: productPrice });  // Thêm sản phẩm vào giỏ hàng
+
+    localStorage.setItem('cart', JSON.stringify(cart));  // Lưu giỏ hàng vào localStorage
+
+    updateCartCount();
+    alert(`${productName} đã được thêm vào giỏ hàng!`);
+}
+
+
+        function updateCartCount() {
+            cartLink.textContent = `Giỏ hàng (${cart.length})`;
+        }
+
+        // Load sản phẩm từ localStorage khi trang được tải
+        loadProducts();
+    </script>
+
+</body>
+</html>

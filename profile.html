@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ người dùng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #0078d4;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            text-align: center;
+            background-color: #0056a1;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .profile-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .profile-header p {
+            color: #555;
+        }
+        .profile-info {
+            margin-bottom: 20px;
+        }
+        .profile-info label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .profile-info p {
+            margin: 0 0 10px;
+            color: #333;
+        }
+        .profile-info button {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .profile-info button:hover {
+            background-color: #0056a1;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #0078d4;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hồ sơ người dùng</h1>
+    </header>
+    <nav>
+        <a href="MyShop.html">Trang chủ</a>
+        <a href="sanpham.html">Sản phẩm</a>
+        <a href="lienhe.html">Liên hệ</a>
+        <a href="gioithieu.html">Giới thiệu</a>
+    </nav>
+    <div class="container">
+        <div class="profile-header">
+            <img src="https://via.placeholder.com/150" alt="Avatar">
+            <h2 id="username">Tên người dùng</h2>
+            <p id="email">email@example.com</p>
+        </div>
+        <div class="profile-info">
+            <h3>Thông tin cá nhân</h3>
+            <label for="full-name">Họ và tên:</label>
+            <p id="full-name">Nguyễn Văn A</p>
+
+            <label for="dob">Ngày sinh:</label>
+            <p id="dob">01/01/1990</p>
+
+            <label for="address">Địa chỉ:</label>
+            <p id="address">123 Đường ABC, TP. Hồ Chí Minh</p>
+        </div>
+        <div class="profile-info">
+            <h3>Thay đổi thông tin</h3>
+            <button onclick="editProfile()">Chỉnh sửa hồ sơ</button>
+            <button onclick="changePassword()">Đổi mật khẩu</button>
+            <button onclick="logout()">Đăng xuất</button>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Shop Bán Hàng Online. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Kiểm tra trạng thái đăng nhập
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const username = localStorage.getItem('username');
+        const email = localStorage.getItem('email');
+
+        if (!isLoggedIn) {
+            window.location.href = 'login.html';
+        }
+
+        // Hiển thị thông tin người dùng
+        document.getElementById('username').textContent = username || 'Tên người dùng';
+        document.getElementById('email').textContent = email || 'email@example.com';
+        document.getElementById('full-name').textContent = localStorage.getItem('fullName') || 'Nguyễn Văn A';
+        document.getElementById('dob').textContent = localStorage.getItem('dob') || '01/01/1990';
+        document.getElementById('address').textContent = localStorage.getItem('address') || '123 Đường ABC, TP. Hồ Chí Minh';
+
+        function editProfile() {
+            alert('Chỉnh sửa hồ sơ');
+            // Có thể thêm logic để chuyển tới trang chỉnh sửa hồ sơ
+        }
+
+        function changePassword() {
+            alert('Đổi mật khẩu');
+            // Thêm logic để chuyển tới trang đổi mật khẩu
+        }
+
+        function logout() {
+            localStorage.setItem('isLoggedIn', 'false');
+            window.location.href = 'login.html';
+        }
+		function editProfile() {
+        const fullName = prompt("Nhập họ và tên mới:", localStorage.getItem('fullName') || 'Nguyễn Văn A');
+        const dob = prompt("Nhập ngày sinh mới (dd/mm/yyyy):", localStorage.getItem('dob') || '01/01/1990');
+        const address = prompt("Nhập địa chỉ mới:", localStorage.getItem('address') || '123 Đường ABC, TP. Hồ Chí Minh');
+        
+        if (fullName && dob && address) {
+            localStorage.setItem('fullName', fullName);
+            localStorage.setItem('dob', dob);
+            localStorage.setItem('address', address);
+
+            document.getElementById('full-name').textContent = fullName;
+            document.getElementById('dob').textContent = dob;
+            document.getElementById('address').textContent = address;
+
+            alert('Thông tin hồ sơ đã được cập nhật.');
+        } else {
+            alert('Cập nhật thông tin bị hủy.');
+        }
+    }
+
+    function changePassword() {
+        const currentPassword = prompt("Nhập mật khẩu hiện tại:");
+        const storedPassword = localStorage.getItem('password') || '123456'; // Mật khẩu mặc định
+
+        if (currentPassword === storedPassword) {
+            const newPassword = prompt("Nhập mật khẩu mới:");
+            const confirmPassword = prompt("Xác nhận mật khẩu mới:");
+
+            if (newPassword && newPassword === confirmPassword) {
+                localStorage.setItem('password', newPassword);
+                alert('Mật khẩu đã được thay đổi.');
+            } else {
+                alert('Xác nhận mật khẩu không khớp.');
+            }
+        } else {
+            alert('Mật khẩu hiện tại không chính xác.');
+        }
+    }
+    </script>
+</body>
+</html>

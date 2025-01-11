@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tài Khoản</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #0078d4;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group button {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .form-group button:hover {
+            background-color: #0056a1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        table th {
+            background-color: #f4f4f9;
+        }
+        .action-buttons button {
+            margin: 0 5px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 15px;
+            background-color: #0078d4;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #0056a1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Quản Lý Tài Khoản</h1>
+    </header>
+    <div class="container">
+        <a href="admin.html" class="back-button">Quay lại</a>
+        <h2>Thêm Tài Khoản</h2>
+        <div class="form-group">
+            <label for="username">Tên đăng nhập</label>
+            <input type="text" id="username" placeholder="Nhập tên đăng nhập">
+        </div>
+        <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" placeholder="Nhập mật khẩu">
+        </div>
+        <div class="form-group">
+            <button onclick="addUser()">Thêm tài khoản</button>
+        </div>
+
+        <h2>Danh Sách Tài Khoản</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="user-list">
+                <!-- Danh sách tài khoản sẽ hiển thị ở đây -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        function renderUsers() {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.username}</td>
+                    <td>${user.locked ? 'Bị khóa' : 'Hoạt động'}</td>
+                    <td class="action-buttons">
+                        <button onclick="toggleUserLock(${index})">${user.locked ? 'Mở khóa' : 'Khóa'}</button>
+                        <button onclick="deleteUser(${index})">Xóa</button>
+                    </td>
+                `;
+                userList.appendChild(row);
+            });
+        }
+
+        function addUser() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                alert('Vui lòng nhập đầy đủ thông tin!');
+                return;
+            }
+
+            const userExists = users.some(user => user.username === username);
+            if (userExists) {
+                alert('Tên đăng nhập đã tồn tại!');
+                return;
+            }
+
+            users.push({ username, password, locked: false });
+            localStorage.setItem('users', JSON.stringify(users));
+            renderUsers();
+
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function toggleUserLock(index) {
+            users[index].locked = !users[index].locked;
+            localStorage.setItem('users', JSON.stringify(users));
+            renderUsers();
+        }
+
+        function deleteUser(index) {
+            if (confirm('Bạn có chắc muốn xóa tài khoản này?')) {
+                users.splice(index, 1);
+                localStorage.setItem('users', JSON.stringify(users));
+                renderUsers();
+            }
+        }
+
+        renderUsers();
+    </script>
+</body>
+</html>

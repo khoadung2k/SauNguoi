@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .message.error {
+            color: #dc3545;
+        }
+
+        .message.success {
+            color: #28a745;
+        }
+
+        .footer-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .footer-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Tạo kiểu cho biểu tượng mắt */
+        .eye-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Đăng ký</h2>
+        <form id="registerForm">
+            <input type="text" id="newUsername" class="input-field" placeholder="Tên đăng nhập mới" required>
+            <div id="usernameMessage" class="message"></div>
+
+            <div style="position: relative;">
+                <input type="password" id="newPassword" class="input-field" placeholder="Mật khẩu mới" required>
+                <span id="eyeIcon" class="eye-icon">👁️</span>
+            </div>
+            <div id="passwordMessage" class="message"></div>
+
+            <button type="submit" class="submit-btn">Đăng ký</button>
+        </form>
+        <div id="greeting" class="message"></div>
+        <div class="footer-link">
+            <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+        </div>
+    </div>
+
+    <script>
+        const usernameField = document.getElementById('newUsername');
+        const usernameMessage = document.getElementById('usernameMessage');
+        const passwordField = document.getElementById('newPassword');
+        const passwordMessage = document.getElementById('passwordMessage');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        const usernameRegex = /^[a-zA-Z0-9_]{5,20}$/; // Username phải từ 5 đến 20 ký tự, chỉ chữ, số và dấu gạch dưới
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // Mật khẩu phải có ít nhất 6 ký tự, có chữ và số
+
+        // Kiểm tra tên đăng nhập khi nhập
+        usernameField.addEventListener('input', function() {
+            if (usernameRegex.test(usernameField.value)) {
+                usernameMessage.textContent = 'Tên đăng nhập hợp lệ!';
+                usernameMessage.className = 'message success';
+                usernameField.style.borderColor = '#28a745';
+            } else {
+                usernameMessage.textContent = 'Tên đăng nhập không hợp lệ (5-20 ký tự, chỉ chữ, số và dấu gạch dưới)';
+                usernameMessage.className = 'message error';
+                usernameField.style.borderColor = '#dc3545';
+            }
+        });
+
+        // Kiểm tra mật khẩu khi nhập
+        passwordField.addEventListener('input', function() {
+            if (passwordRegex.test(passwordField.value)) {
+                passwordMessage.textContent = 'Mật khẩu hợp lệ!';
+                passwordMessage.className = 'message success';
+                passwordField.style.borderColor = '#28a745';
+            } else {
+                passwordMessage.textContent = 'Mật khẩu không hợp lệ (ít nhất 6 ký tự, có chữ và số)';
+                passwordMessage.className = 'message error';
+                passwordField.style.borderColor = '#dc3545';
+            }
+        });
+
+        // Hiển thị/ẩn mật khẩu khi click vào biểu tượng mắt
+        let isPasswordVisible = false;
+        eyeIcon.addEventListener('click', function() {
+            isPasswordVisible = !isPasswordVisible;
+            if (isPasswordVisible) {
+                passwordField.type = 'text'; // Hiển thị mật khẩu
+                eyeIcon.textContent = '🙈'; // Biểu tượng con mắt đóng
+            } else {
+                passwordField.type = 'password'; // Ẩn mật khẩu
+                eyeIcon.textContent = '👁️'; // Biểu tượng con mắt mở
+            }
+        });
+
+        // Xử lý đăng ký
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const newUsername = usernameField.value;
+            const newPassword = passwordField.value;
+
+            // Kiểm tra tính hợp lệ của tên đăng nhập và mật khẩu
+            if (!usernameRegex.test(newUsername)) {
+                usernameMessage.textContent = 'Tên đăng nhập không hợp lệ (5-20 ký tự, chỉ chữ, số và dấu gạch dưới)';
+                usernameMessage.className = 'message error';
+                return;
+            }
+
+            if (!passwordRegex.test(newPassword)) {
+                passwordMessage.textContent = 'Mật khẩu không hợp lệ (ít nhất 6 ký tự, có chữ và số)';
+                passwordMessage.className = 'message error';
+                return;
+            }
+
+            // Kiểm tra xem tài khoản đã tồn tại chưa
+            if (localStorage.getItem(newUsername)) {
+                usernameMessage.textContent = 'Tên đăng nhập đã tồn tại!';
+                usernameMessage.className = 'message error';
+                return;
+            }
+
+            // Lưu thông tin tài khoản vào localStorage
+            localStorage.setItem(newUsername, newPassword);
+            document.getElementById('greeting').textContent = `Đăng ký thành công! Xin chào, ${newUsername}!`;
+            document.getElementById('greeting').className = 'message success';
+
+            // Chuyển hướng đến trang MyShop.html sau khi đăng ký thành công
+            setTimeout(function() {
+                window.location.href = 'login.html'; // Sau khi đăng ký thành công, chuyển đến trang đăng nhập
+            }, 1000); // Sau 1 giây
+        });
+    </script>
+</body>
+</html>

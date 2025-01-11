@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #0078d4;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        nav {
+            text-align: center;
+            background-color: #0056a1;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-item p {
+            margin: 0;
+        }
+        .cart-summary {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .cart-summary p {
+            margin: 5px 0;
+        }
+        .cart-summary .total-price {
+            font-weight: bold;
+            color: #0078d4;
+        }
+        .checkout-btn {
+            background-color: #0078d4;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .checkout-btn:hover {
+            background-color: #0056a1;
+        }
+        .payment-form {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .payment-form input, .payment-form select, .payment-form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #0078d4;
+            color: white;
+            margin-top: 20px;
+        }
+        .cart {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .cart a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cart">
+            <a href="giohang.html" id="cart-link">Giỏ hàng (0)</a>
+        </div>
+        <h1>Giỏ Hàng</h1>
+    </header>
+    <nav>
+        <a href="MyShop.html">Trang chủ</a>
+        <a href="sanpham.html">Sản phẩm</a>
+        <a href="lienhe.html">Liên hệ</a>
+        <a href="gioithieu.html">Giới thiệu</a>
+    </nav>
+    <div class="container">
+        <h2>Chi tiết giỏ hàng</h2>
+        <div id="cart-items">
+            <!-- Các sản phẩm trong giỏ hàng sẽ được hiển thị ở đây -->
+        </div>
+        
+        <div class="cart-summary">
+            <p>Tổng số sản phẩm: <span id="total-items">0</span></p>
+            <p class="total-price" id="total-price">Tổng tiền: 0 VND</p>
+        </div>
+
+        <button class="checkout-btn" onclick="showPaymentForm()">Tiến hành thanh toán</button>
+
+        <!-- Form thông tin thanh toán -->
+        <div class="payment-form" id="payment-form" style="display:none;">
+            <h3>Thông tin thanh toán</h3>
+            <form id="payment-info">
+                <label for="full-name">Họ và tên:</label>
+                <input type="text" id="full-name" name="full-name" required>
+
+                <label for="address">Địa chỉ giao hàng:</label>
+                <input type="text" id="address" name="address" required>
+
+                <label for="payment-method">Phương thức thanh toán:</label>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="credit-card">Thẻ tín dụng</option>
+                    <option value="e-wallet">Ví điện tử</option>
+                    <option value="cash-on-delivery">Thanh toán khi nhận hàng (COD)</option>
+                </select>
+
+                <button type="submit" class="checkout-btn">Xác nhận thanh toán</button>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Shop Bán Hàng Online. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const cartLink = document.getElementById('cart-link');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const totalPriceElement = document.getElementById('total-price');
+        const totalItemsElement = document.getElementById('total-items');
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];  // Lấy giỏ hàng từ localStorage
+
+        function updateCart() {
+            cartItemsContainer.innerHTML = '';  // Xóa các sản phẩm cũ
+            let totalPrice = 0;
+
+            // Hiển thị các sản phẩm trong giỏ hàng
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <p>${item.name}</p>
+                    <p>${item.price.toLocaleString('vi-VN')} VND</p>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+                totalPrice += item.price;
+            });
+
+            // Cập nhật tổng tiền
+            totalPriceElement.textContent = `Tổng tiền: ${totalPrice.toLocaleString('vi-VN')} VND`;
+            totalItemsElement.textContent = cart.length;
+            cartLink.textContent = `Giỏ hàng (${cart.length})`;  // Cập nhật số lượng giỏ hàng
+        }
+
+        function showPaymentForm() {
+            const paymentForm = document.getElementById('payment-form');
+            paymentForm.style.display = 'block';  // Hiển thị form thanh toán
+        }
+
+        document.getElementById('payment-info').addEventListener('submit', function(event) {
+            event.preventDefault();  // Ngừng gửi form
+
+            const fullName = document.getElementById('full-name').value;
+            const address = document.getElementById('address').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            // Xử lý thanh toán (giả lập)
+            alert(`Cảm ơn ${fullName}! Thanh toán thành công qua phương thức: ${paymentMethod}.`);
+
+            // Xóa giỏ hàng sau khi thanh toán
+            localStorage.removeItem('cart');
+            cart = [];
+            updateCart();  // Cập nhật giỏ hàng sau khi thanh toán
+
+            // Ẩn form thanh toán
+            document.getElementById('payment-form').style.display = 'none';
+        });
+
+        // Cập nhật giỏ hàng khi trang được tải
+        updateCart();
+    </script>
+</body>
+</html>

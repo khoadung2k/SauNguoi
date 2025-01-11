@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: #fff;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .message.success {
+            color: #28a745;
+        }
+
+        .message.error {
+            color: #dc3545;
+        }
+
+        .footer-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .footer-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Đăng nhập</h2>
+        <form id="loginForm">
+            <input type="text" id="username" class="input-field" placeholder="Tên đăng nhập" required>
+            <div class="password-wrapper">
+                <input type="password" id="password" class="input-field" placeholder="Mật khẩu" required>
+                <span id="eyeIcon" class="eye-icon">👁️</span>
+            </div>
+            <button type="submit" class="submit-btn">Đăng nhập</button>
+        </form>
+        <div id="greeting" class="message"></div>
+        <div class="footer-link">
+            <p>Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const usernameField = document.getElementById('username');
+        const passwordField = document.getElementById('password');
+        const greeting = document.getElementById('greeting');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        let isPasswordVisible = false;
+
+        // Lưu tài khoản admin mặc định nếu chưa có
+        if (!localStorage.getItem('admin')) {
+            localStorage.setItem('admin', JSON.stringify({ username: 'admin', password: 'admin123' }));
+        }
+
+        // Hiển thị/ẩn mật khẩu
+        eyeIcon.addEventListener('click', function() {
+            isPasswordVisible = !isPasswordVisible;
+            passwordField.type = isPasswordVisible ? 'text' : 'password';
+            eyeIcon.textContent = isPasswordVisible ? '🙈' : '👁️';
+        });
+
+        // Xử lý đăng nhập
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = usernameField.value.trim();
+            const password = passwordField.value.trim();
+
+            // Lấy danh sách tài khoản từ localStorage
+            const adminAccount = JSON.parse(localStorage.getItem('admin'));
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+
+            if (username === adminAccount.username && password === adminAccount.password) {
+                // Đăng nhập admin thành công
+                greeting.textContent = 'Đăng nhập thành công với tài khoản admin!';
+                greeting.className = 'message success';
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('role', 'admin');
+
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1000);
+            } else {
+                // Kiểm tra tài khoản người dùng
+                const user = users.find(user => user.username === username);
+
+                if (user) {
+                    if (user.password === password) {
+                        if (user.locked) {
+                            greeting.textContent = 'Tài khoản của bạn đang bị khóa!';
+                            greeting.className = 'message error';
+                        } else {
+                            greeting.textContent = `Chào mừng, ${username}! Bạn đã đăng nhập thành công.`;
+                            greeting.className = 'message success';
+
+                            localStorage.setItem('isLoggedIn', 'true');
+                            localStorage.setItem('role', 'user');
+                            localStorage.setItem('username', username);
+
+                            setTimeout(() => {
+                                window.location.href = 'MyShop.html';
+                            }, 1000);
+                        }
+                    } else {
+                        greeting.textContent = 'Mật khẩu không chính xác!';
+                        greeting.className = 'message error';
+                    }
+                } else {
+                    greeting.textContent = 'Tài khoản không tồn tại!';
+                    greeting.className = 'message error';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
